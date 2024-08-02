@@ -2,10 +2,11 @@ import 'dotenv/config';
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import { errorMiddleware } from './middlewares/ErrorMiddleware.js';
+import { errorMiddleware } from './middlewares/ErrorHandler.js';
 import { notFoundMiddleware } from './middlewares/NotFoundMiddleware.js';
-import { getAllContacts, getContactById } from './services/contacts.js';
-import mongoose from 'mongoose';
+// import { getAllContacts, getContactById } from './services/contacts.js';
+// import mongoose from 'mongoose';
+import contactRoutes from './routers/contacts.js';
 
 export const setupServer = () => {
   const app = express();
@@ -23,44 +24,7 @@ export const setupServer = () => {
   app.get('/', (req, res) => {
     res.send('Hello world');
   });
-  app.get('/contacts', async (req, res) => {
-    try {
-      const contacts = await getAllContacts();
-      console.log(contacts);
-      res.json({
-        status: 200,
-        message: 'Successfully found contacts!',
-        data: contacts,
-      });
-    } catch (error) {
-      res.status(500).send(error.message);
-    }
-  });
-  app.get('/contacts/:id', async (req, res) => {
-    try {
-      const { id } = req.params;
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({
-          status: 400,
-          message: `Invalid contact ID: ${id}`,
-        });
-      }
-      const contact = await getContactById(id);
-      if (contact === null) {
-        return res.status(404).json({
-          status: 404,
-          message: `Contact with id ${id} not found!`,
-        });
-      }
-      res.json({
-        status: 200,
-        message: `Successfully get contact with id ${id}!`,
-        data: contact,
-      });
-    } catch (error) {
-      res.status(500).send(error.message);
-    }
-  });
+  app.use('/contacts', contactRoutes);
   app.use(notFoundMiddleware);
   app.use(errorMiddleware);
 
