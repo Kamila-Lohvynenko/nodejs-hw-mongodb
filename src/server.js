@@ -4,8 +4,6 @@ import pino from 'pino-http';
 import cors from 'cors';
 import { errorMiddleware } from './middlewares/ErrorHandler.js';
 import { notFoundMiddleware } from './middlewares/NotFoundMiddleware.js';
-// import { getAllContacts, getContactById } from './services/contacts.js';
-// import mongoose from 'mongoose';
 import contactRoutes from './routers/contacts.js';
 
 export const setupServer = () => {
