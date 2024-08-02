@@ -3,7 +3,7 @@ import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
 import { errorMiddleware } from './middlewares/ErrorHandler.js';
-import { notFoundMiddleware } from './middlewares/NotFoundMiddleware.js';
+import { notFoundMiddleware } from './middlewares/notFoundHandler.js';
 import contactRoutes from './routers/contacts.js';
 
 export const setupServer = () => {
