@@ -11,3 +11,6 @@ export const getContactById = (id) => {
 export const createContact = (payload) => {
   return Contact.create(payload);
 };
+export const deleteContact = (id) => {
+  return Contact.findByIdAndDelete(id);
+};

@@ -2,6 +2,7 @@ import {
   getAllContacts,
   getContactById,
   createContact,
+  deleteContact,
 } from '../services/contacts.js';
 import mongoose from 'mongoose';
 import createHttpError from 'http-errors';
@@ -48,4 +49,16 @@ export async function createContactController(req, res) {
     message: 'Successfully created a contact!',
     data: newContact,
   });
+}
+export async function deleteContactController(req, res, next) {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return next(createHttpError(404, 'Contact not found'));
+  }
+  const result = await deleteContact(id);
+  if (result === null) {
+    return next(createHttpError(404, 'Student not found'));
+  }
+
+  res.status(204).end();
 }
