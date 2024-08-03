@@ -14,3 +14,6 @@ export const createContact = (payload) => {
 export const deleteContact = (id) => {
   return Contact.findByIdAndDelete(id);
 };
+export const patchContact = (id, payload) => {
+  return Contact.findByIdAndUpdate(id, payload, { new: true });
+};
