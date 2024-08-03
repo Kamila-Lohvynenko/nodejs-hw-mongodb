@@ -1,4 +1,8 @@
-import { getAllContacts, getContactById } from '../services/contacts.js';
+import {
+  getAllContacts,
+  getContactById,
+  createContact,
+} from '../services/contacts.js';
 import mongoose from 'mongoose';
 import createHttpError from 'http-errors';
 
@@ -27,5 +31,21 @@ export async function getContactController(req, res, next) {
     status: 200,
     message: `Successfully get contact with id ${id}!`,
     data: contact,
+  });
+}
+export async function createContactController(req, res) {
+  const contact = {
+    name: req.body.name,
+    phoneNumber: req.body.phoneNumber,
+    email: req.body.email,
+    isFavourite: req.body.isFavourite,
+    contactType: req.body.contactType,
+  };
+  const newContact = await createContact(contact);
+
+  res.status(201).send({
+    status: 201,
+    message: 'Successfully created a contact!',
+    data: newContact,
   });
 }

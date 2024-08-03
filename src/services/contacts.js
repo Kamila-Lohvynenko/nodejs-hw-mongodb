@@ -7,3 +7,7 @@ export const getAllContacts = () => {
 export const getContactById = (id) => {
   return Contact.findById(id);
 };
+
+export const createContact = (payload) => {
+  return Contact.create(payload);
+};
