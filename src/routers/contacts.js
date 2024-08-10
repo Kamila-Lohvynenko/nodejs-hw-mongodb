@@ -8,6 +8,11 @@ import {
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { isValidId } from './../middlewares/isValidId.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import {
+  createContactSchema,
+  updateContactSchema,
+} from '../validation/student.js';
 
 const router = express.Router();
 const jsonParser = express.json();
@@ -18,7 +23,12 @@ router.get(
   isValidId('contactId'),
   ctrlWrapper(getContactController),
 );
-router.post('/', jsonParser, ctrlWrapper(createContactController));
+router.post(
+  '/',
+  jsonParser,
+  validateBody(createContactSchema),
+  ctrlWrapper(createContactController),
+);
 router.delete(
   '/:contactId',
   isValidId('contactId'),
@@ -28,6 +38,7 @@ router.patch(
   '/:contactId',
   isValidId('contactId'),
   jsonParser,
+  validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
 );
 
