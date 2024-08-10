@@ -13,12 +13,20 @@ const router = express.Router();
 const jsonParser = express.json();
 
 router.get('/', ctrlWrapper(getContactsController));
-router.get('/:id', isValidId, ctrlWrapper(getContactController));
+router.get(
+  '/:contactId',
+  isValidId('contactId'),
+  ctrlWrapper(getContactController),
+);
 router.post('/', jsonParser, ctrlWrapper(createContactController));
-router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
+router.delete(
+  '/:contactId',
+  isValidId('contactId'),
+  ctrlWrapper(deleteContactController),
+);
 router.patch(
-  '/:id',
-  isValidId,
+  '/:contactId',
+  isValidId('contactId'),
   jsonParser,
   ctrlWrapper(patchContactController),
 );
