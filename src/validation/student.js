@@ -7,9 +7,9 @@ const nameMessage = {
 };
 
 const phoneNumberMessage = {
-  'number.base': '{{#label}} must be a number',
-  'number.min': '{{#label}} must be at list {#limit}',
-  'number.max': '{{#label}} must be at most {#limit}',
+  'number.base': 'PhoneNumber must be a number',
+  'number.min': 'PhoneNumber must be at list {#limit}',
+  'number.max': 'PhoneNumber must be at most {#limit}',
 };
 
 export const createContactSchema = Joi.object({
