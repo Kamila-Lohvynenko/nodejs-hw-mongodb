@@ -26,7 +26,8 @@ export const getAllContacts = async ({
       .merge(contactQuery)
       .sort({ [sortBy]: sortOrder })
       .skip(skip)
-      .limit(perPage),
+      .limit(perPage)
+      .exec(),
   ]);
 
   const paginationInformation = calculatePaginationData(
