@@ -12,7 +12,7 @@ import { validateBody } from '../middlewares/validateBody.js';
 import {
   createContactSchema,
   updateContactSchema,
-} from '../validation/student.js';
+} from '../validation/contact.js';
 
 const router = express.Router();
 const jsonParser = express.json();
