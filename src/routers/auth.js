@@ -1,8 +1,11 @@
 import express from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { registerUserController } from '../controllers/auth.js';
+import {
+  loginUserController,
+  registerUserController,
+} from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import { registerSchema } from '../validation/auth.js';
+import { loginSchema, registerSchema } from '../validation/auth.js';
 
 const router = express.Router();
 const jsonParser = express.json();
@@ -12,6 +15,13 @@ router.post(
   jsonParser,
   validateBody(registerSchema),
   ctrlWrapper(registerUserController),
+);
+
+router.post(
+  '/login',
+  jsonParser,
+  validateBody(loginSchema),
+  ctrlWrapper(loginUserController),
 );
 
 export default router;
