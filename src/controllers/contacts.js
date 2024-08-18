@@ -70,6 +70,12 @@ export async function createContactController(req, res) {
 export async function deleteContactController(req, res, next) {
   const { contactId } = req.params;
 
+  const contact = await getContactById(contactId);
+
+  if (contact.userId.toString() !== req.user._id.toString()) {
+    next(createHttpError(403, 'Contact not allowed'));
+  }
+
   const result = await deleteContact(contactId);
   if (result === null) {
     return next(createHttpError(404, 'Contact not found'));
@@ -80,6 +86,13 @@ export async function deleteContactController(req, res, next) {
 
 export async function patchContactController(req, res, next) {
   const { contactId } = req.params;
+
+  const contact = await getContactById(contactId);
+
+  if (contact.userId.toString() !== req.user._id.toString()) {
+    next(createHttpError(403, 'Contact not allowed'));
+  }
+
   const updatedContact = await patchContact(contactId, req.body);
   if (updatedContact === null) {
     return next(createHttpError(404, 'Contact not found'));
