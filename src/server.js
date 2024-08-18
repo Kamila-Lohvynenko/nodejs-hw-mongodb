@@ -7,6 +7,7 @@ import { notFoundMiddleware } from './middlewares/notFoundHandler.js';
 import contactRoutes from './routers/contacts.js';
 import authRouter from './routers/auth.js';
 import cookieParser from 'cookie-parser';
+import { authenticate } from './middlewares/authenticate.js';
 
 export const setupServer = () => {
   const app = express();
@@ -24,10 +25,10 @@ export const setupServer = () => {
   app.use(cors());
 
   app.get('/', (req, res) => {
-    res.send('Hello world');
+    res.send('Your contacts book');
   });
   app.use('/auth', authRouter);
-  app.use('/contacts', contactRoutes);
+  app.use('/contacts', authenticate, contactRoutes);
   app.use(notFoundMiddleware);
   app.use(errorMiddleware);
 
