@@ -20,17 +20,17 @@ export const authenticate = async (req, res, next) => {
   const session = await Session.findOne({ accessToken });
 
   if (session === null) {
-    next(createHttpError(401, 'Session not found'));
+    return next(createHttpError(401, 'Session not found'));
   }
 
   if (new Date() > session.accessTokenValidUntil) {
-    next(createHttpError(401, 'Access token is expired'));
+    return next(createHttpError(401, 'Access token is expired'));
   }
 
   const user = await User.findById(session.userId);
 
   if (user === null) {
-    next(createHttpError(401, 'Session not found'));
+    return next(createHttpError(401, 'User associated with session not found'));
   }
 
   req.user = user;

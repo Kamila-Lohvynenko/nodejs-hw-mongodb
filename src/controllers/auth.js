@@ -4,6 +4,7 @@ import {
   refreshSession,
   registerUser,
 } from '../services/auth.js';
+import { setSessionCookies } from '../utils/setSessionCookies.js';
 
 export const registerUserController = async (req, res) => {
   const user = {
@@ -13,8 +14,8 @@ export const registerUserController = async (req, res) => {
   };
 
   const newUser = await registerUser(user);
-  res.status(200).send({
-    status: 200,
+  res.status(201).send({
+    status: 201,
     message: 'User is successfully registered',
     user: newUser,
   });
@@ -25,13 +26,7 @@ export const loginUserController = async (req, res) => {
 
   const session = await loginUser(email, password);
 
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-  });
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: session.refreshTokenValidUntil,
-  });
+  setSessionCookies(res, session);
 
   res.status(200).send({
     status: 200,
@@ -58,13 +53,7 @@ export const refreshController = async (req, res) => {
 
   const newSession = await refreshSession(sessionId, refreshToken);
 
-  res.cookie('sessionId', newSession._id, {
-    httpOnly: true,
-  });
-  res.cookie('refreshToken', newSession.refreshToken, {
-    httpOnly: true,
-    expires: newSession.refreshTokenValidUntil,
-  });
+  setSessionCookies(res, newSession);
 
   res.status(200).send({
     status: 200,
