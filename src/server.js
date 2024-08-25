@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import path from 'node:path';
 // import pino from 'pino-http';
 import cors from 'cors';
 import { errorMiddleware } from './middlewares/ErrorHandler.js';
@@ -24,6 +25,10 @@ export const setupServer = () => {
 
   app.use(cors());
 
+  app.use(
+    '/contactAvatars',
+    express.static(path.resolve('src', 'public', 'contactAvatars')),
+  );
   app.get('/', (req, res) => {
     res.send('Your contacts book');
   });

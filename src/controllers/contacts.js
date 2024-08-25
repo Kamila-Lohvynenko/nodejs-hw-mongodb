@@ -1,3 +1,6 @@
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
+
 import {
   getAllContacts,
   getContactById,
@@ -9,6 +12,7 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
 
 export async function getContactsController(req, res) {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -52,6 +56,22 @@ export async function getContactController(req, res, next) {
 }
 
 export async function createContactController(req, res) {
+  let photo;
+
+  if (typeof req.file !== 'undefined') {
+    if (process.env.ENABLE_CLOUDINARY === 'true') {
+      const result = await uploadToCloudinary(req.file.path);
+      await fs.unlink(req.file.path);
+
+      photo = result.secure_url;
+    } else {
+      await fs.rename(
+        req.file.path,
+        path.resolve('src', 'public', 'contactAvatars', req.file.filename),
+      );
+      photo = `http://localhost:8080/contactAvatars/${req.file.filename}`;
+    }
+  }
   const contact = {
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
@@ -59,6 +79,7 @@ export async function createContactController(req, res) {
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
     userId: req.user._id,
+    photo,
   };
   const newContact = await createContact(contact);
 
@@ -82,10 +103,28 @@ export async function deleteContactController(req, res, next) {
 }
 
 export async function patchContactController(req, res, next) {
+  let photo;
+
+  if (typeof req.file !== 'undefined') {
+    if (process.env.ENABLE_CLOUDINARY === 'true') {
+      const result = await uploadToCloudinary(req.file.path);
+      await fs.unlink(req.file.path);
+
+      photo = result.secure_url;
+    } else {
+      await fs.rename(
+        req.file.path,
+        path.resolve('src', 'public', 'contactAvatars', req.file.filename),
+      );
+      photo = `http://localhost:8080/contactAvatars/${req.file.filename}`;
+    }
+  }
+  const payload = { ...req.body, photo };
+
   const { contactId } = req.params;
   const userId = req.user._id;
 
-  const updatedContact = await patchContact(contactId, req.body, userId);
+  const updatedContact = await patchContact(contactId, payload, userId);
   if (updatedContact === null) {
     return next(createHttpError(404, 'Contact not found'));
   }
