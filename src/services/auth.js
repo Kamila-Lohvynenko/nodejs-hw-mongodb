@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+import handlebars from 'handlebars';
 import createHttpError from 'http-errors';
 import { User } from '../db/models/user.js';
 import { Session } from '../db/models/session.js';
@@ -84,13 +88,23 @@ export const requestResetEmail = async (email) => {
     process.env.JWT_SECRET,
     { expiresIn: '7d' },
   );
+  const href = `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`;
+
+  const templateSource = fs.readFileSync(
+    path.resolve('src/templates/reset-password.hbs'),
+    {
+      encoding: 'UTF-8',
+    },
+  );
+  const template = handlebars.compile(templateSource);
+  const html = template({ name: user.name, href });
 
   try {
     await sendMail({
       from: SMTP.FROM,
       to: email,
       subject: 'Reset your password',
-      html: `<b>Please, follow this <a href="google.com/reset?token=${resetToken}">link</a></b>`,
+      html,
     });
   } catch (error) {
     console.log(error);
