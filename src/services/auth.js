@@ -3,6 +3,9 @@ import { User } from '../db/models/user.js';
 import { Session } from '../db/models/session.js';
 import bcrypt from 'bcrypt';
 import { createSession } from '../utils/createSession.js';
+import { sendMail } from '../utils/sendMail.js';
+import { SMTP, ERROR_NAME } from '../constants/index.js';
+import jwt from 'jsonwebtoken';
 
 export const registerUser = async (payload) => {
   const maybeUser = await User.findOne({ email: payload.email });
@@ -64,4 +67,66 @@ export const refreshSession = async (sessionId, refreshToken) => {
     userId: session.userId,
     ...createSession(),
   });
+};
+
+export const requestResetEmail = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (user === null) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' },
+  );
+
+  try {
+    await sendMail({
+      from: SMTP.FROM,
+      to: email,
+      subject: 'Reset your password',
+      html: `<b>Please, follow this <a href="google.com/reset?token=${resetToken}">link</a></b>`,
+    });
+  } catch (error) {
+    console.log(error);
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+};
+
+export const resetPassword = async (password, token) => {
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
+  } catch (error) {
+    if (
+      error.name === ERROR_NAME.JsonWebTokenError ||
+      error.name === ERROR_NAME.TokenExpiredError
+    ) {
+      throw createHttpError(401, 'Token is expired or invalid.');
+    }
+    throw error;
+  }
+
+  const user = await User.findOne({ _id: decoded.sub, email: decoded.email });
+
+  if (user === null) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await User.findOneAndUpdate(
+    { _id: decoded.sub },
+    { password: hashedPassword },
+  );
 };
