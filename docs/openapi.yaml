@@ -13,7 +13,7 @@ tags:
     description: Authentication operations
 servers:
   - url: http://localhost:3000
-  # - url: #посилання на задеплоєний сайт
+  - url: https://swagger-docs-vtnn.onrender.com
 paths:
   /contacts:
     get:
