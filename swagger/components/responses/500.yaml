@@ -1,15 +1,12 @@
-description: Unauthorized error
+description: Internal server error.
 content:
   application/json:
     schema:
       type: object
-      required:
-        - status
-        - message
       properties:
         status:
           type: integer
-          example: 401
+          example: 500
         message:
           type: string
-          example: 'Access token expired'
+          example: 'Internal server error'

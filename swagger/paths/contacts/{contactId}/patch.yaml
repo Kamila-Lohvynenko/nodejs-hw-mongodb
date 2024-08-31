@@ -1,19 +1,22 @@
 tags:
   - Contacts
-summary: Create contact
-operationId: createContact
-description: 'Create contact'
+summary: Update contact
+operationId: updateContact
+description: 'Update contact'
 security:
   - bearerAuth: []
+parameters:
+  - in: path
+    name: contactId
+    required: true
+    schema:
+      type: string
+      example: '66c1e21719a4fb9dba80298'
 requestBody:
   content:
     multipart/form-data:
       schema:
         type: object
-        required:
-          - name
-          - phoneNumber
-          - email
         properties:
           name:
             description: "Contact's name"
@@ -42,7 +45,7 @@ requestBody:
             type: string
             format: binary
 responses:
-  '201':
+  '200':
     description: 'Create a contact'
     content:
       application/json:
@@ -55,14 +58,29 @@ responses:
           properties:
             status:
               type: integer
-              example: 201
+              example: 200
             message:
               type: string
               example: Successfully created a contact!
             data:
               type: object
-              $ref: '../../components/schemas/contact.yaml'
+              $ref: '../../../components/schemas/contact.yaml'
+  '400':
+    description: Bad request, invalid input data.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: Invalid input data. Please check the request body.
   '401':
-    $ref: '../../components/responses/401.yaml'
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
   '500':
-    $ref: '../../components/responses/500.yaml'
+    $ref: '../../../components/responses/500.yaml'

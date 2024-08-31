@@ -1,4 +1,4 @@
-description: Unauthorized error
+description: 'The requested resource could not be found'
 content:
   application/json:
     schema:
@@ -9,7 +9,7 @@ content:
       properties:
         status:
           type: integer
-          example: 401
+          example: 404
         message:
           type: string
-          example: 'Access token expired'
+          example: The requested resource could not be found!

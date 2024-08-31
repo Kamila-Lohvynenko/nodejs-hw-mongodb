@@ -22,7 +22,7 @@ properties:
   email:
     description: "Contact's email"
     type: string
-    example: 'janedoe@example.com'
+    example: 'johndoe@example.com'
   isFavourite:
     description: 'Is the contact marked as favourite?'
     type: boolean
@@ -40,4 +40,4 @@ properties:
   photo:
     description: "URL to the contact's photo"
     type: string
-    example: 'https://res.cloudinary.com/uqwgdu/image/upload/image.png'
+    example: 'https://res.cloudinary.com/dzz7ax5zv/image/upload/image.jpg'
